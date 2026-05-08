@@ -5,7 +5,7 @@
 Gerenciador Cadastro = new Gerenciador();
 bool sair = false;
 string input;
-
+//Fernando é um gayzão
 
 while (true)
 {   
