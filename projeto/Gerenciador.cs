@@ -1,8 +1,8 @@
-
-class Gerenciador : CadastroAluno
+public class Gerenciador
 {
-    public List<CadastroAluno> Alunos = new List<CadastroAluno>();
-    public CadastroAluno Aluno = new CadastroAluno();
+    private List<CadastroAluno> Alunos { get; set; } = new List<CadastroAluno>();
+    public int alunoSelecionado = -1;
+    CadastroAluno aluno;
 
     public void ExibirDados()
     {
@@ -12,42 +12,104 @@ class Gerenciador : CadastroAluno
         }
         else
         {
-            int i = 0; //Serve para enumerar os alunos, indicando assim suas posições na lista
-            foreach (CadastroAluno elemento in Alunos)
+            for (int i = 0; i < Alunos.Count; i++)
             {
-                Console.WriteLine(i + elemento.NomeAluno); //Acessar Proteção
-                i++;
-            } 
+               Console.WriteLine($"[{i}] - {Alunos[i].NomeAluno}");
+            }                   
         }
     }
-
+    public void SelecionarAlunoPorIndice(int indice)
+    {
+        if (indice >= 0 && indice < Alunos.Count)
+        {
+            this.alunoSelecionado = indice;
+            Console.WriteLine($"Aluno {Alunos[indice].NomeAluno} selecionado para edição.");
+        }
+    }
+    public void AdicionarAluno()
+    {
+        aluno = new CadastroAluno();
+        Alunos.Add(aluno);
+        alunoSelecionado = Alunos.Count - 1;
+    }
     public void ColetarNome()
     {
-        Console.WriteLine("Digite o nome do aluno.");
-        Alunos.Add(new CadastroAluno());
-        Alunos.Last().NomeAluno = Console.ReadLine(); //Acessar Proteção
-        Console.WriteLine($"Nome {Alunos.NomeAluno} adiconado!"); //Acessar Proteção
-    }  
-
+        if (alunoSelecionado >= 0 && alunoSelecionado < Alunos.Count)
+        {
+            Console.WriteLine("Digite o nome:");
+            string input = Console.ReadLine();
+            Alunos[alunoSelecionado].DefinirNome(input);
+        }
+        else
+        {
+            Console.WriteLine("Nenhum aluno selecionado.");
+        }
+    }
     public void ColetarIdade()
     {
-        Console.WriteLine("Digite a idade do aluno.");
-        Alunos.Last().Idade = Console.ReadLine(); //Acessar Proteção
-        Console.WriteLine($"Nome {Alunos.NomeAluno} adiconado!"); //Acessar Proteção
-    } 
-
-    public void ColetarCpf()
-    {
-        Console.WriteLine("Digite o nome do aluno.");
-        Alunos.Last().Cpf = Console.ReadLine(); //Acessar Proteção
-        Console.WriteLine($"Nome {Alunos.NomeAluno} adiconado!"); //Acessar Proteção 
+        if (alunoSelecionado >= 0 && alunoSelecionado < Alunos.Count)
+        {
+            Console.WriteLine("Digite a idade:");
+            string input = Console.ReadLine();
+            Alunos[alunoSelecionado].DefinirIdade(Convert.ToInt32(input));
+        }
+        else
+        {
+            Console.WriteLine("Nenhum aluno selecionado.");
+        }
     }
-
-    public void ColetarEndereco()
+        public void ColetarCPF()
     {
-     
+        if (alunoSelecionado >= 0 && alunoSelecionado < Alunos.Count)
+        {
+            Console.WriteLine("Digite o CPF:");
+            string input = Console.ReadLine();
+            Alunos[alunoSelecionado].DefinirCPF(input);
+        }
+        else
+        {
+            Console.WriteLine("Nenhum aluno selecionado.");
+        }
+    }
+    public void ExcluirCadastro()
+    {
+        if (alunoSelecionado >= 0 && alunoSelecionado < Alunos.Count)
+        {
+            Alunos.RemoveAt(alunoSelecionado);
+            Console.WriteLine("Aluno removido com sucesso!");
+        }
+        else
+        {
+            Console.WriteLine("Nenhum aluno selecionado.");
+        }        
+    }
+public void ColetarEndereco()
+    {
+        if (alunoSelecionado >= 0 && alunoSelecionado < Alunos.Count)
+        {
+            Console.WriteLine("Digite o CEP:");
+            string cep = Console.ReadLine();
+       
+            Console.WriteLine("Digite a Cidade:");
+            string cidade = Console.ReadLine();
+ 
+            Console.WriteLine("Digite o Bairro:");
+            string bairro = Console.ReadLine();
+ 
+            Console.WriteLine("Digite a Rua:");
+            string rua = Console.ReadLine();
+ 
+            Console.WriteLine("Digite o Número:");
+            string numero = Console.ReadLine();
+ 
+            Console.WriteLine("Digite o Complemento:");
+            string complemento = Console.ReadLine();
+            
+            Alunos[alunoSelecionado].DefinirEndereco(cep, cidade, bairro, rua, numero, complemento);
+        }
+        else
+        {
+            Console.WriteLine("Nenhum aluno selecionado.");
+        }
     }
 }
-
-//Codigo está montado para adicionar os dados para o aluno mais recente, porém deve ser alterado para adicionar dados ao aluno indexado
-//Assim, será possível reutilizar os mesmos métodos seja para adicionar um aluno novo ou editar uma informação ja existente;
