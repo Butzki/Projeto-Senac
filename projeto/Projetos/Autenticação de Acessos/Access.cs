@@ -1,72 +1,102 @@
+using System.Net.Security;
+//Admin > Usuário, Senha e 2FA
+// Admin, Admin, 1A2B3C
 
-using System.Runtime.InteropServices;
+//User > Usuário, Senha
+// User, User
 
-public class CadastroAluno
+//Convidado > Usuário temporário (fornecido via convite prévio)
+// Convidado
+
+//Caso existissem multiplos acessos ao invés de verificar valores fixos, bastaria percorrer pelos valores de uma lista de acessos em cada classe.
+
+public abstract class Access
 {
- public string NomeAluno { get; private set;}
-    public int Idade { get; private set;}
-    public string CPF { get; private set;}
-    public List<string> Endereco {get; private set;} = new List<string> { "", "", "", "", "", "" };
-    public string CEP {get; private set;}
-    public string Cidade {get; private set;}
-    public string Bairro {get; private set;}
-    public string Rua {get; private set;}
-    public string Numero {get; private set;}
-    public string Complemento {get; private set;}
 
-    public void DefinirNome(string novoNome)
+    protected string login { get; private set; }
+    protected string password { get; private set; }
+
+    public bool autenticado { get; protected set; } = false;
+
+    public virtual bool AutenticarAcesso(string inputLogin, string inputPass)
     {
-        if (!string.IsNullOrWhiteSpace(novoNome))
+        if (inputLogin == login && inputPass == password)
         {
-            this.NomeAluno = novoNome;
+            autenticado = true;
+            return true;
         }
+        return false;
     }
-    public void DefinirIdade(int novaIdade)
-        {
-            if (novaIdade >=16 && novaIdade <120)
-            {
-                this.Idade = novaIdade;
-            }
-        }
-    public void DefinirCPF(string novoCPF)
-        {
-            if (!string.IsNullOrWhiteSpace(novoCPF))
-            {
-                this.CPF = novoCPF;
-            }
-        }
 
-  public void DefinirEndereco(string novoCEP, string novaCidade, string novoBairro, string novaRua, string novoNumero, string novoComplemento)
+    public abstract void AcessarDashboard();
+
+}
+
+public class Admin : Access
+{
+    public string login { get; private set; } = "Admin";
+    public string password { get; private set; } = "Admin";
+    public string FA2 { get; private set; } = "1A2B3C";
+
+    public override bool AutenticarAcesso(string inputLogin, string inputPass)
+    {
+        if (inputLogin == login && inputPass == password)
         {
-            if (!string.IsNullOrWhiteSpace(novoCEP))
+            Console.WriteLine("Qual seu token de 2 fatores?");
+            string input2fa = Console.ReadLine();
+            if (input2fa == FA2)
             {
-                this.Endereco[0] = novoCEP;
+                autenticado = true;
+                return true;
             }
- 
-            if (!string.IsNullOrWhiteSpace(novaCidade))
-            {
-                this.Endereco[1] = novaCidade;
-            }
- 
-            if (!string.IsNullOrWhiteSpace(novoBairro))
-            {
-                this.Endereco[2] = novoBairro;
-            }
- 
-            if (!string.IsNullOrWhiteSpace(novaRua))
-            {
-                this.Endereco[3] = novaRua;
-            }
- 
-            if (!string.IsNullOrWhiteSpace(novoNumero))
-            {
-                this.Endereco[4] = novoNumero;
-            }
- 
-            if (!string.IsNullOrWhiteSpace(novoComplemento))
-            {
-                this.Endereco[5] = novoComplemento;
-            }
+            return false;
         }
+        return false;
+    }
+
+    public override void AcessarDashboard() {
+        Console.WriteLine("Dashboard ADMIN: visualização e edição completa.");
+    }
+
+}
+
+public class User : Access
+{
+    public string login { get; private set; } = "User";
+    public string password { get; private set; } = "User";
+
+    public override bool AutenticarAcesso(string inputLogin, string inputPass)
+    {
+        if (inputLogin == login && inputPass == password)
+        {
+            autenticado = true;
+            return true;
+        }
+        return false;
+    }
+
+    public override void AcessarDashboard() {
+        Console.WriteLine("Dashboard USUARIO: visualização geral.");
+    }
+}
+
+public class Invited : Access
+{
+    public string login { get; private set; } = "Convidado";
+    public string password { get; private set; } = "";
+
+    public override bool AutenticarAcesso(string inputLogin, string inputPass)
+    {
+        if (inputLogin == login)
+        {
+            autenticado = true;
+            return true;
+        }
+        return false;
+    }
+
+    public override void AcessarDashboard() {
+        Console.WriteLine("Dashboard CONVIDADO: visualização pública com restrições.");
+    }
 
 }
